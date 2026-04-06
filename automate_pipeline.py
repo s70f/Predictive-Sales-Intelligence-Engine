@@ -3,10 +3,17 @@ from sqlalchemy import create_engine
 import pandas as pd
 import subprocess
 import os
+from dotenv import load_dotenv
 
-# Format: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
-PASS = os.getenv('DB_PASSWORD')
-DB_URL = f"postgresql://admin:{PASS}@localhost:5432/dental_clinic"
+# Load the variables from the .env file
+load_dotenv()
+
+# Get the password from the environment
+db_pass = os.getenv('DB_PASSWORD')
+db_user = os.getenv('DB_USER')
+db_name = os.getenv('DB_NAME')
+
+DB_URL = f"postgresql://{db_user}:{db_pass}@localhost:5432/{db_name}"
 
 engine = create_engine(DB_URL)
 
