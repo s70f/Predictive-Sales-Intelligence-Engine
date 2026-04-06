@@ -18,3 +18,5 @@ dbt_packages/
 logs/
 
 init.sql
+Dental SQL.session.sql
+settings.json

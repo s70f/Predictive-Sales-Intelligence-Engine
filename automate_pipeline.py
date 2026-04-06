@@ -20,7 +20,7 @@ engine = create_engine(DB_URL)
 
 def ingest_data(file_path, table_name):
     df = pd.read_csv(file_path)
-    df.to_sql(table_name, engine, if_exists='append', index=False)
+    df.to_sql(table_name, engine, if_exists='replace', index=False)
 
     print(f"Successfully uploaded {len(df)} rows to {table_name}")
 
