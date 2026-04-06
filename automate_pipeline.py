@@ -17,6 +17,20 @@ DB_URL = f"postgresql://{db_user}:{db_pass}@localhost:5432/{db_name}"
 
 engine = create_engine(DB_URL)
 
+# def manage_docker(action):
+#     """Starts or stops the database container."""
+#     if action == "start":
+#         print("Waking up the database...")
+#         # '-d' runs it in the background
+#         subprocess.run(["docker", "compose", "up", "-d"], check=True)
+#         # Give Postgres a few seconds to 'boot up' before we talk to it
+#         time.sleep(5)
+#     else:
+#         print("Putting the database to sleep")
+#         # 'stop' keeps the data safe. 'down' is also fine.
+#         # NEVER use 'down -v' or you'll delete the data history!
+#         subprocess.run(["docker", "compose", "stop"], check=True)
+
 
 def ingest_data(file_path, table_name):
     df = pd.read_csv(file_path)
@@ -37,13 +51,31 @@ def run_dbt():
         print("dbt Error:")
         print(result.stderr)
 
+# def run_transformations():
+#     """Triggers dbt to clean the data."""
+#     print("Running dbt cleaning...")
+#     # 'cwd' stands for Current Working Directory - tells Python where the dbt folder is
+#     subprocess.run(["dbt", "run"], cwd="./dental_dbt", check=True)
+
 
 if __name__ == '__main__':
 
-    ingest_data('./raw_transaction.csv', 'raw_transacations')
-    # ingest_data('./inventory.csv', 'raw_inventory')
+    try:
+        # manage_docker("start")
+        ingest_data('./raw_transaction.csv', 'raw_transacations')
+        # ingest_data('./inventory.csv', 'raw_inventory')
 
-    run_dbt()
-    print("Monthly Update Complete! New Data is now loaded in.")
+        # run_transformations()
+        run_dbt()
 
-    # Import -> Connect -> Ingest -> Run dbt
+        print("Your data is now clean and ready for analysis.")
+
+        # Here is where to launch the Sales Dashboard
+        # subprocess.run(["streamlit", "run", "dashboard.py"])
+
+    except Exception as e:
+        print(f"Something went wrong: {e}")
+
+    finally:
+        # manage_docker("stop")
+        pass
