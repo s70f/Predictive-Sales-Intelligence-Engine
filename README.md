@@ -1,4 +1,3 @@
-It sounds like you've reached a major milestone! Moving from raw CSVs to a functioning, automated pipeline is a huge win. Before we dive into the "Science" (the ML and analysis), here is the comprehensive documentation of the **Dental Sales Data Pipeline** we’ve built together.
 
 ---
 
@@ -39,11 +38,3 @@ The pipeline follows a specific sequence to ensure data integrity:
 * **History:** To rebuild the entire 3-year history from scratch, run `dbt run --full-refresh`.
 
 ---
-
-### 🚀 Next Step: The "Science" Phase
-Now that the plumbing is solid, we have a "Golden Dataset" ready for analysis. We can now move into a **Jupyter Notebook** to answer the big business questions:
-* *Which clinics are "Churning" (stopping their orders)?*
-* *What is the predicted demand for Matrix Bands next month?*
-* *Which products have the highest profit margins after joining the Inventory data?*
-
-**Would you like to start by joining the Inventory data to see those profit margins, or go straight into a Notebook to see the 3-year sales trends?**
