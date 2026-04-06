@@ -1,4 +1,9 @@
-{{ config(materialized='table') }} -- command for dbt engine to wrap query in CREATE TABLE AS
+{{
+    config(
+        materialized='incremental',
+        unique_key='order_id'
+    )
+}} -- command for dbt engine to wrap query in CREATE TABLE AS
 
 SELECT
     "Order Num" AS order_id, -- Note: Must use double quotes or postgres qill think order num is two commands.
@@ -17,3 +22,9 @@ SELECT
 FROM {{ source('external_data', 'raw_transacations') }} -- Keeps all the file names in one file for easy change
 
 -- FROM {{ ref('raw_transacations')}} -- don't hardcode table name. This references file in seed folder
+
+{% if is_incremental() %}
+  -- Only look at rows that are NEWER than the newest row currently in our table
+  -- This prevents us from processing 3 years of data every single time.
+  WHERE "Date" > (SELECT max(transaction_date) FROM {{ this }})
+{% endif %}

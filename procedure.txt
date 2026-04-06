@@ -26,3 +26,7 @@ PYTHON INGESTOR
 - Injects file with pandas and the engine thing that knows postgres language
 - runs the dbt subprocess automatically
 - NOTE: For future add an automated start and stop docker container so company can use it whenever they want
+
+GITHUB
+- Made repo for this and ensured gitignore was working to hide data
+- created env folder with all the passwords that someone else will need to have if they want to run this on another computer
