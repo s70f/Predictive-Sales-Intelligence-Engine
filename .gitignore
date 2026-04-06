@@ -1,0 +1,20 @@
+# The Database (Docker's hidden data)
+postgres_data/
+
+# The Virtual Environment (Python's big folder)
+dbt-env/
+venv/
+
+# The Actual Data (The CSVs)
+*.csv
+dental_dbt/seeds/*.csv
+
+# Secrets (Passwords)
+.env
+
+# dbt junk
+target/
+dbt_packages/
+logs/
+
+init.sql

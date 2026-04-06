@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: external_data  # This is the Namespace
+    database: dental_clinic
+    schema: public
+    tables:
+      - name: raw_inventory 
+      - name: raw_transactions

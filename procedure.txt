@@ -1,0 +1,28 @@
+DOCKER
+- Downloaded Docker CLI using Terminal
+- Created docker-compose.yml
+- Setup Container for Postgres Engine
+- Created database in this container
+- Setup the environment for postgresql
+    - Used volumes so data isn't temporary
+
+DBT
+- Installed dbt in an venv
+- ran dbt init
+- Put the data into the seed folder then ran dbt seed. Table was created in database.
+- Created staging model in models/
+- Told dbt engine to build the table inside the Dockerized PostgreSQL: dbt run. (ERROR)
+    - dbt takes the table we already created in the docker container and rebuilds it in the cleaned version
+Massive Error and learnt something new.
+So with dbt workflow we actually clean the data with an sql query and then dbt builds the clean table.
+
+- Creating dbt macros so we don't have to rewrite queries for inventory table.
+- Cleaned data and dbt rebuilt it
+
+- Created a src_dental.yml file so that if we change the location of the csv files we just have to change it in one place.
+- NOTE: For automated pipelines don't use seed. Must use Airbyte or something to automatically load it in. For now we using python script
+
+PYTHON INGESTOR
+- Injects file with pandas and the engine thing that knows postgres language
+- runs the dbt subprocess automatically
+- NOTE: For future add an automated start and stop docker container so company can use it whenever they want
