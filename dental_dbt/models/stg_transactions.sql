@@ -5,7 +5,7 @@
     )
 }} -- command for dbt engine to wrap query in CREATE TABLE AS
 
-SELECT
+SELECT DISTINCT ON ("Order Num")
     "Order Num" AS order_id, -- Note: Must use double quotes or postgres qill think order num is two commands.
     "Customer" AS clinic_name,
     "Item Code" AS item_code,
