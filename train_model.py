@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import implicit
 from scipy.sparse import csr_matrix
 import mlflow
-import mlflow.implicit
 
 # Load db credentials
 load_dotenv()
@@ -75,10 +74,13 @@ def train_recommender(user_item_matrix, df) -> None:
 
         # Saving parameters and model artifact
         mlflow.log_param("factors", 50)
-        mlflow.log_param("Sparsity", round(calculate_sparsity(df), 2))
         mlflow.log_param("iterations", 20)
         mlflow.log_param("regularization", 0.1)
-        mlflow.implicit.log_model(model, artifact_path="model")
+        mlflow.log_param("sparsity", round(calculate_sparsity(df), 2))
+
+        # Save model locally then tell MLflow to track file
+        model.save("als_model.npz")
+        mlflow.log_artifact("als_model.npz", artifact_path="model")
 
         print("Trained and logged version to MLflow")
 
