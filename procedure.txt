@@ -34,4 +34,12 @@ GITHUB
 - changed replace in to_sql to append so that we can add new csv's. Also added increments in the stage sql files to accodomate this.
 
 EDA
-- 
+- Sparsity calculations to make sure we can actually run AlS
+- Looking at how many times products are purchased
+- looking at how many purchases a company makes. if it makes less than one it's useless for collaborative filtering
+
+MODEL
+- created user-item matrix
+- trained model using implicit library
+- tracked model using MLflow
+    - tracked using database

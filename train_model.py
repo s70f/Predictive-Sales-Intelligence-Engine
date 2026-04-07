@@ -57,6 +57,7 @@ def train_recommender(user_item_matrix, df) -> None:
     sparse_user_item = csr_matrix(user_item_matrix.values)
 
     # Tracking
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("Dental_Recommender_Model_A")
 
     with mlflow.start_run():

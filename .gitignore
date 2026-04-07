@@ -20,3 +20,8 @@ logs/
 init.sql
 Dental SQL.session.sql
 settings.json
+
+# MLflow Tracking & Artifacts
+mlflow.db
+mlruns/
+*.npz
