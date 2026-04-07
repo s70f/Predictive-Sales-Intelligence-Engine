@@ -32,3 +32,6 @@ GITHUB
 - created env folder with all the passwords that someone else will need to have if they want to run this on another computer
 
 - changed replace in to_sql to append so that we can add new csv's. Also added increments in the stage sql files to accodomate this.
+
+EDA
+- 
