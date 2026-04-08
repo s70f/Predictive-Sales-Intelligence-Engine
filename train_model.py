@@ -4,7 +4,9 @@ import os
 from dotenv import load_dotenv
 
 import implicit
+import scipy.sparse
 from scipy.sparse import csr_matrix
+
 import mlflow
 
 # Load db credentials
@@ -70,8 +72,8 @@ def train_recommender(user_item_matrix, df) -> None:
             regularization=0.1
         )
 
-        # Fit the model (Transposed because implicit expects item-user matrix)
-        model.fit(sparse_user_item.T)
+        # Fit the model
+        model.fit(sparse_user_item)
 
         # Saving parameters and model artifact
         mlflow.log_param("factors", 50)
@@ -81,6 +83,9 @@ def train_recommender(user_item_matrix, df) -> None:
 
         # Save model locally then tell MLflow to track file
         model.save("als_model.npz")
+        scipy.sparse.save_npz("training_matrix.npz",
+                              sparse_user_item)  # Save matrix as well
+
         mlflow.log_artifact("als_model.npz", artifact_path="model")
 
         print("Trained and logged version to MLflow")

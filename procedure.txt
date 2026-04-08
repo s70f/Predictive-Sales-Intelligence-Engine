@@ -43,3 +43,6 @@ MODEL
 - trained model using implicit library
 - tracked model using MLflow
     - tracked using database
+
+FASTAPI
+- 
