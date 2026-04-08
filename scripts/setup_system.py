@@ -44,7 +44,7 @@ def setup():
 
         # 4. Train AI Model
         print("Training AI Brain (This may take a minute)")
-        subprocess.run(["python", "train_model.py"], check=True)
+        subprocess.run(["python", "src/train_model.py"], check=True)
 
         print("\nSETUP COMPLETE The AI is fully trained and ready for daily use")
 

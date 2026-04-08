@@ -21,12 +21,12 @@ if __name__ == '__main__':
         print("Starting AI Engine")
         # 2. Launch FastAPI in the background
         api_process = subprocess.Popen(
-            ["uvicorn", "main:app", "--port", "8000"])
+            ["uvicorn", "src.main:app", "--port", "8000"])
         time.sleep(3)  # Give the API a moment to load the model into RAM
 
         print("Launching Dashboard")
         # 3. Launch Streamlit
-        subprocess.run(["streamlit", "run", "app.py"])
+        subprocess.run(["streamlit", "run", "src/app.py"])
 
     except KeyboardInterrupt:
         print("\nClosing application")

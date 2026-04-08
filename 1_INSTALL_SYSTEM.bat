@@ -5,6 +5,6 @@ echo =========================================
 echo.
 echo Please wait while we build your database and train the AI...
 echo.
-python setup_system.py
+python scripts/setup_system.py
 echo.
 pause
