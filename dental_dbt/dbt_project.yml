@@ -1,0 +1,27 @@
+name: 'dental_dbt'
+version: '1.0.0'
+config-version: 2
+
+# Core Configuration
+profile: 'dental_dbt'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Materialization Rules
+models:
+  dental_dbt:
+    # Everything in the 'staging' folder will be materialized as a view by default
+    staging:
+      +materialized: view
+    # Final tables for the AI model can be materialized as tables for performance
+    marts:
+      +materialized: table
