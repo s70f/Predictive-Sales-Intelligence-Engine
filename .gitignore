@@ -27,3 +27,5 @@ mlruns/
 *.npz
 
 __pycache__/
+preview.png
+procedure.txt

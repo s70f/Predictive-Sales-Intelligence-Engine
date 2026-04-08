@@ -16,6 +16,8 @@ Rather than just building a mathematical model, we developed a complete product 
 * **The Intelligence Engine:** An automated data pipeline extracts raw transaction data, cleans it using modern data warehousing techniques (dbt), and trains a Collaborative Filtering Machine Learning model. The model learns the hidden relationships between products based on the purchasing habits of hundreds of clinics.
 * **The Contextual Dashboard:** A custom web application gives sales reps instant access to AI predictions. Crucially, the UI displays the clinic's historical top purchases *alongside* the AI recommendations. This provides the "Why", allowing the rep to see that because Clinic A buys high volumes of *Xylocaine*, they are highly likely to need *Astracaine*.
 
+<img width="800" height="769" alt="preview" src="https://github.com/user-attachments/assets/bb8f0b83-1e70-4913-9753-ed5ab8675333" />
+
 ## Data Architecture & Pipeline
 The Dental Product Recommendation system was built on a modern Medallion architecture, ensuring that raw accounting data is cleaned, transformed, and served with zero manual intervention. The entire stack is containerized to allow for Single-Click updates.
 
@@ -52,5 +54,3 @@ Sales reps need answers while on the phone with clients. By decoupling the machi
 * **Machine Learning:** Python, Implicit (ALS Algorithm), MLflow
 * **Serving Layer:** FastAPI (REST API)
 * **Presentation Layer:** Streamlit
-
-***
