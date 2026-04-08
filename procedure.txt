@@ -45,4 +45,7 @@ MODEL
     - tracked using database
 
 FASTAPI
+- implemented fast api
+
+STREAMLIT FRONTEND
 - 

@@ -81,3 +81,9 @@ async def recommend(clinic_id: int):
         "recommendations": recommended_names,
         "scores": [float(s) for s in scores]  # Pydantic needs standard floats
     }
+
+
+@app.get("/clinics", response_model=List[str])
+async def get_clinics():
+    """Returns full list of clinics sorted by index"""
+    return app.state.clinics
