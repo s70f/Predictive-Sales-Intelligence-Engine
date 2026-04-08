@@ -54,3 +54,5 @@ Sales reps need answers while on the phone with clients. By decoupling the machi
 * **Machine Learning:** Python, Implicit (ALS Algorithm), MLflow
 * **Serving Layer:** FastAPI (REST API)
 * **Presentation Layer:** Streamlit
+
+***
