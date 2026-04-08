@@ -41,26 +41,50 @@ selected_name = st.selectbox("Start typing a clinic name", options=clinics)
 
 clinic_id = clinics.index(selected_name)
 
-if st.button("Generate AI Recommendations"):
-    with st.spinner(f"Analyzing purchase history for {selected_name}..."):
+# 4. The Action Button
+if st.button("Analyze Clinic"):
+    with st.spinner(f"Analyzing {selected_name}"):
 
-        res = requests.get(f"{api_base}/recommend/{clinic_id}")
+        # Ping BOTH endpoints at the same time
+        rec_res = requests.get(f"{api_base}/recommend/{clinic_id}")
+        hist_res = requests.get(f"{api_base}/history/{clinic_id}")
 
-        if res.status_code == 200:
-            data = res.json()
+        if rec_res.status_code == 200 and hist_res.status_code == 200:
+            rec_data = rec_res.json()
+            hist_data = hist_res.json()
 
-            st.success(
-                f"Recommendations for **{selected_name}** (ID: {clinic_id})")
+            st.success(f"Analysis Complete for **{selected_name}**")
 
-            rec_df = pd.DataFrame({
-                "Product Code": data['recommendations'],
-                "AI Confidence": data['scores']
-            })
+            col1, col2 = st.columns(2)
 
-            # Display as a table
-            st.table(rec_df)
+            with col1:
+                st.subheader("Top Purchase History")
+                if hist_data['history']:
+                    hist_df = pd.DataFrame(hist_data['history'])
 
-            st.info(
-                "These items are predicted based on similar clinics's purchasing patterns.")
+                    # Select only the human-friendly name and count
+                    display_hist = hist_df[["Product Name", "Times Purchased"]]
+
+                    # SWITCH: Use st.table for a clean, full-width look
+                    st.table(display_hist)
+                else:
+                    st.info("No purchase history found.")
+
+            with col2:
+                st.subheader("AI Recommendations")
+
+                rec_df = pd.DataFrame(rec_data['recommendations'])
+
+                # Format the AI Confidence
+                rec_df['score'] = rec_df['score'].apply(
+                    lambda x: f"{x * 100:.1f}%")
+
+                # Filter to show ONLY the Name and Match
+                rec_df.columns = ["SKU", "Product Name", "AI Match"]
+                display_rec = rec_df[["Product Name", "AI Match"]]
+
+                # SWITCH: Use st.table to prevent cutting off long names
+                st.table(display_rec)
         else:
-            st.error("API Error: Could not generate recommendations.")
+            st.error(
+                "API Error: Make sure FastAPI is running and both endpoints exist.")

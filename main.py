@@ -15,10 +15,15 @@ load_dotenv()
 ml_models = {}
 
 
+class RecommendationItem(BaseModel):
+    code: str
+    name: str
+    score: float
+
+
 class RecResponse(BaseModel):
     clinic_name: str
-    recommendations: List[str]
-    scores: List[float]
+    recommendations: List[RecommendationItem]
 
 
 @asynccontextmanager
@@ -44,11 +49,18 @@ async def lifespan(app: FastAPI):
     matrix = df_filtered.groupby(
         ['clinic_name', 'item_code']).size().unstack(fill_value=0)
 
-    app.state.clinics = list(matrix.index)
+    app.state.clinics = [name.title() for name in list(matrix.index)]
     app.state.products = list(matrix.columns)
 
     # Dictionary translates IDs to Names
-    # ml_models["products"] = {}
+    product_meta_df = pd.read_sql(
+        "SELECT DISTINCT item_code, item_name FROM stg_transactions", engine)
+
+    # Create a fast lookup dictionary: { "item_code": "Human Friendly Name" }
+    app.state.product_lookup = pd.Series(
+        product_meta_df.item_name.values,
+        index=product_meta_df.item_code
+    ).to_dict()
 
     yield  # Server ready
 
@@ -59,7 +71,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/recommend/{clinic_id}", response_model=RecResponse)
-async def recommend(clinic_id: int):
+async def recommend(clinic_id: int, request: Request):
     # Check if the ID exists in matrix
     if clinic_id < 0 or clinic_id >= len(app.state.clinics):
         raise HTTPException(
@@ -75,11 +87,23 @@ async def recommend(clinic_id: int):
 
     # Map the numeric IDs back to Product Names
     recommended_names = [app.state.products[i] for i in ids]
+    # Map the numeric IDs back to Product Names
+
+    recommended_items = []
+    for i, score in zip(ids, scores):
+        code = request.app.state.products[i]
+        # Look up the human name using the code. Default to the code if name is missing.
+        name = request.app.state.product_lookup.get(code, "Unknown Product")
+
+        recommended_items.append({
+            "code": code,
+            "name": name,
+            "score": float(score)
+        })
 
     return {
-        "clinic_name": app.state.clinics[clinic_id],
-        "recommendations": recommended_names,
-        "scores": [float(s) for s in scores]  # Pydantic needs standard floats
+        "clinic_name": request.app.state.clinics[clinic_id],
+        "recommendations": recommended_items
     }
 
 
@@ -87,3 +111,33 @@ async def recommend(clinic_id: int):
 async def get_clinics():
     """Returns full list of clinics sorted by index"""
     return app.state.clinics
+
+
+@app.get("/history/{clinic_id}")
+async def get_purchase_history(clinic_id: int):
+    if clinic_id < 0 or clinic_id >= len(app.state.clinics):
+        raise HTTPException(status_code=404, detail="Clinic ID not found")
+
+    user_row = app.state.sparse_data[clinic_id]
+
+    purchases = list(zip(user_row.indices, user_row.data))
+    purchases.sort(key=lambda x: x[1], reverse=True)
+
+    top_5_history = purchases[:5]
+
+    history_list = []
+    for product_id, count in top_5_history:
+        code = app.state.products[product_id]
+        # Look up the real name
+        name = app.state.product_lookup.get(code, "Unknown Product")
+
+        history_list.append({
+            "Code": code,
+            "Product Name": name,
+            "Times Purchased": int(count)
+        })
+
+    return {
+        "clinic_name": app.state.clinics[clinic_id],
+        "history": history_list
+    }
