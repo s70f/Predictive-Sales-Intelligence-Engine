@@ -1,7 +1,7 @@
 @echo off
 echo =========================================
-echo   Starting Dental AI System...
+echo   DENTAL AI: LAUNCHING DASHBOARD
 echo =========================================
-call activate base
-python automate_pipeline.py
+echo.
+python run_app.py
 pause
