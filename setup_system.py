@@ -21,6 +21,11 @@ def manage_docker(action):
 
 def setup():
     try:
+        # 0. Requirements
+        print("Installing required Python libraries")
+        subprocess.run(
+            ["pip", "install", "-r", "requirements.txt"], check=True)
+
         manage_docker("start")
 
         # 1. Connect to DB
