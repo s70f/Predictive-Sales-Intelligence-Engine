@@ -1,81 +1,65 @@
-# Defining how to find the database
-from sqlalchemy import create_engine
-import pandas as pd
 import subprocess
+import time
+import pandas as pd
+from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
-# Load the variables from the .env file
 load_dotenv()
 
-# Get the password from the environment
-db_pass = os.getenv('DB_PASSWORD')
-db_user = os.getenv('DB_USER')
-db_name = os.getenv('DB_NAME')
-
-DB_URL = f"postgresql://{db_user}:{db_pass}@localhost:5432/{db_name}"
-
+DB_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:5432/{os.getenv('DB_NAME')}"
 engine = create_engine(DB_URL)
-
-# def manage_docker(action):
-#     """Starts or stops the database container."""
-#     if action == "start":
-#         print("Waking up the database...")
-#         # '-d' runs it in the background
-#         subprocess.run(["docker", "compose", "up", "-d"], check=True)
-#         # Give Postgres a few seconds to 'boot up' before we talk to it
-#         time.sleep(5)
-#     else:
-#         print("Putting the database to sleep")
-#         # 'stop' keeps the data safe. 'down' is also fine.
-#         # NEVER use 'down -v' or you'll delete the data history!
-#         subprocess.run(["docker", "compose", "stop"], check=True)
 
 
 def ingest_data(file_path, table_name):
+    print(f"Loading {file_path} into database")
     df = pd.read_csv(file_path)
     df.to_sql(table_name, engine, if_exists='replace', index=False)
-
-    print(f"Successfully uploaded {len(df)} rows to {table_name}")
+    print(f"Successfully uploaded {len(df)} rows.")
 
 
 def run_dbt():
-    print("Starting dbt transformation")
-
+    print("🧹leaning data with dbt")
     result = subprocess.run(
         ["dbt", "run"], cwd="./dental_dbt", capture_output=True, text=True)
+    if result.returncode != 0:
+        print("dbt Error:\n", result.stderr)
+        raise Exception("dbt failed")
+    print("Data cleaned.")
 
-    if result.returncode == 0:
-        print("dbt transformation complete")
-    else:
-        print("dbt Error:")
-        print(result.stderr)
 
-# def run_transformations():
-#     """Triggers dbt to clean the data."""
-#     print("Running dbt cleaning...")
-#     # 'cwd' stands for Current Working Directory - tells Python where the dbt folder is
-#     subprocess.run(["dbt", "run"], cwd="./dental_dbt", check=True)
+def train_model():
+    print("Training AI Model")
+    subprocess.run(["python", "train_model.py"], check=True)
+    print("AI Model updated.")
 
 
 if __name__ == '__main__':
-
+    api_process = None
     try:
-        # manage_docker("start")
-        ingest_data('./raw_transaction.csv', 'raw_transacations')
-        # ingest_data('./inventory.csv', 'raw_inventory')
-
-        # run_transformations()
+        # 1. Pipeline Steps
+        # Update table name to match your setup
+        ingest_data('./raw_transaction.csv', 'stg_transactions')
         run_dbt()
+        train_model()
 
-        print("Your data is now clean and ready for analysis.")
+        print("System Ready! Launching Dashboard")
 
-        # Here is where to launch the Sales Dashboard
-        # subprocess.run(["streamlit", "run", "dashboard.py"])
+        # 2. Launch FastAPI in the background
+        api_process = subprocess.Popen(
+            ["uvicorn", "main:app", "--port", "8000"])
+
+        # Give the API 3 seconds to boot up before opening the frontend
+        time.sleep(3)
+
+        # 3. Launch Streamlit
+        subprocess.run(["streamlit", "run", "app.py"])
 
     except Exception as e:
-        print(f"Something went wrong: {e}")
+        print(f"System Error: {e}")
 
     finally:
-        # manage_docker("stop")
-        pass
+        # 4. Cleanup: When they close the dashboard, kill the hidden FastAPI server
+        print("Shutting down servers")
+        if api_process:
+            api_process.terminate()

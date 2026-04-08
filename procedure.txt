@@ -48,4 +48,4 @@ FASTAPI
 - implemented fast api
 
 STREAMLIT FRONTEND
-- 
+- connected to api with get_recommendations function
