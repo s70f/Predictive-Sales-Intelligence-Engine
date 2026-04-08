@@ -5,19 +5,19 @@ An established B2B dental wholesaler processes thousands of transactions monthly
 
 ## The Business Challenge
 In the dental supply industry, sales representatives must navigate complex product catalogs and understand nuanced clinical workflows.
-1. **Missed Opportunities:** Reps often missed complementary product sales (e.g., selling a high-end resin cement but forgetting to pitch the required etching gel and mixing tips).
+1. **Missed Opportunities:** Reps often missed complementary product sales (ex. selling a high-end resin cement but forgetting to pitch the required etching gel and mixing tips).
 2. **Data Silos:** Valuable purchasing history was locked inside accounting software (QuickBooks), making it inaccessible for proactive sales strategy.
-3. **The "Black Box" Problem:** Even when standard data reports were available, sales teams hesitated to use them because they lacked context. A simple list of "recommended products" without reasoning is difficult for a rep to pitch confidently to a clinic.
+3. **The "Black Box" Problem:** Even when standard data reports were available, sales teams hesitated to use them because they lacked context. A simple list of recommended products without reasoning is difficult for a rep to pitch confidently to a clinic.
 
 ## The Solution
 We developed the **Dental Product Recommendation System**, a predictive analytics platform built specifically for non-technical sales users.
 
 Rather than just building a mathematical model, we developed a complete product suite:
-* **The Intelligence Engine:** An automated data pipeline extracts raw transaction data, cleans it using modern data warehousing techniques (dbt), and trains a Collaborative Filtering Machine Learning model. The AI "learns" the hidden relationships between products based on the purchasing habits of hundreds of clinics.
-* **The Contextual Dashboard:** A custom web application gives sales reps instant access to AI predictions. Crucially, the UI displays the clinic's historical top purchases *alongside* the AI recommendations. This provides the "Why"—allowing the rep to see that because Clinic A buys high volumes of *Xylocaine*, they are highly likely to need *Astracaine*.
+* **The Intelligence Engine:** An automated data pipeline extracts raw transaction data, cleans it using modern data warehousing techniques (dbt), and trains a Collaborative Filtering Machine Learning model. The model learns the hidden relationships between products based on the purchasing habits of hundreds of clinics.
+* **The Contextual Dashboard:** A custom web application gives sales reps instant access to AI predictions. Crucially, the UI displays the clinic's historical top purchases *alongside* the AI recommendations. This provides the "Why", allowing the rep to see that because Clinic A buys high volumes of *Xylocaine*, they are highly likely to need *Astracaine*.
 
 ## Data Architecture & Pipeline
-The Sintco AI system was built on a modern "Medallion" architecture, ensuring that raw accounting data is cleaned, transformed, and served with zero manual intervention. The entire stack is containerized to allow for "Single-Click" updates.
+The Dental Product Recommendation system was built on a modern Medallion architecture, ensuring that raw accounting data is cleaned, transformed, and served with zero manual intervention. The entire stack is containerized to allow for Single-Click updates.
 
 ### 1) Data Structure & Schema
 The core database consists of a high-density transaction matrix with a total row count exceeding 100,000 records.
@@ -42,7 +42,7 @@ The core database consists of a high-density transaction matrix with a total row
 The AI successfully learned dental procedures without being explicitly programmed. It accurately predicts prerequisites—such as recommending specific burs and etchants to clinics that recently purchased permanent crowns—enabling reps to sell complete procedural kits rather than isolated items.
 
 **2. Accountant-Proof Deployment**
-To ensure adoption, the entire complex software architecture was containerized. The system features a "one-click" setup that automatically builds the database, trains the AI on fresh data, and launches the dashboard, allowing non-technical staff to update the system at the end of the month without engineering support.
+To ensure adoption, the entire complex software architecture was containerized. The system features a one-click setup that automatically builds the database, trains the AI on fresh data, and launches the dashboard, allowing non-technical staff to update the system at the end of the month without engineering support.
 
 **3. Zero-Latency User Experience**
 Sales reps need answers while on the phone with clients. By decoupling the machine learning math from the user interface and serving the model entirely from RAM via a dedicated API, the dashboard returns complex AI predictions in milliseconds.
